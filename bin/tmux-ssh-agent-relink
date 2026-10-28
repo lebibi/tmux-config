@@ -1,0 +1,31 @@
+#!/bin/sh
+# Re-point ~/.ssh/ssh_auth_sock at a live client's forwarded agent
+#
+# $1 is the attaching client and is tried first. A client started inside tmux
+# carries the stable path, so the other clients follow, most recently active first.
+
+set -u
+
+link="$HOME/.ssh/ssh_auth_sock"
+
+# Print the forwarded socket of process $1, or fail
+socket_of() {
+    sock=$(tr '\0' '\n' < "/proc/$1/environ" 2>/dev/null |
+           sed -n 's/^SSH_AUTH_SOCK=//p' | tail -n 1)
+    [ -n "$sock" ] || return 1
+    [ "$sock" != "$link" ] || return 1
+    [ -S "$sock" ] || return 1
+    echo "$sock"
+}
+
+clients=$(tmux list-clients -F '#{client_activity} #{client_pid}' 2>/dev/null |
+          sort -rn | cut -d ' ' -f 2)
+
+for pid in "${1:-}" $clients; do
+    [ -n "$pid" ] || continue
+    sock=$(socket_of "$pid") || continue
+    ln -sfn "$sock" "$link"
+    exit 0
+done
+
+exit 0

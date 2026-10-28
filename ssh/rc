@@ -1,0 +1,15 @@
+# Run by sshd for every incoming connection, before the login shell starts.
+
+# Point the stable agent socket used by tmux panes at this connection
+if [ -S "${SSH_AUTH_SOCK:-}" ]; then
+    ln -sfn "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh_auth_sock"
+fi
+
+# This file disables sshd's own xauth setup. Block taken verbatim from sshd(8).
+if read -r proto cookie && [ -n "${DISPLAY:-}" ]; then
+    if [ "$(echo "$DISPLAY" | cut -c1-10)" = 'localhost:' ]; then
+        echo add unix:"$(echo "$DISPLAY" | cut -c11-)" "$proto" "$cookie"
+    else
+        echo add "$DISPLAY" "$proto" "$cookie"
+    fi | xauth -q -
+fi
