@@ -24,30 +24,24 @@ sudo make install
 
 ## Installation
 
-1. clone this repo to .tmux
+1. clone this repo to `~/.config/tmux`, where tmux 3.1+ finds `tmux.conf` itself
 
     ```bash
-    git clone https://github.com/nwesem/tmux-config .tmux
-    # or ssh
-    git clone git@github.com:nwesem/tmux-config.git .tmux
+    git clone git@github.com:lebibi/tmux-config.git ~/.config/tmux
     ```
+
+    Remove any `~/.tmux.conf`, tmux reads it before `~/.config/tmux/tmux.conf`.
 
 1. install tmux plugin manager
 
     ```bash
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-    ```
-
-1. link .tmux.conf to home
-
-    ```bash
-    ln -s ~/.tmux/.tmux.conf ~/.tmux.conf
+    git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
     ```
 
 1. if in tmux session source file
 
     ```bash
-    tmux source ~/.tmux.conf
+    tmux source ~/.config/tmux/tmux.conf
     ```
 
 1. Now tap the rewritten key bindings `CTRL + a` + `I` to install all plugins
@@ -56,7 +50,7 @@ sudo make install
 
 ## SSH agent forwarding
 
-`.tmux.conf` points every pane at a stable socket path, `~/.ssh/ssh_auth_sock`,
+`tmux.conf` points every pane at a stable socket path, `~/.ssh/ssh_auth_sock`,
 instead of the ephemeral one a given SSH connection provides. Two things keep
 that symlink aimed at the live connection's agent, so panes that were already
 open when you detached keep working after you reattach:
@@ -69,7 +63,7 @@ Without the steps below, agent forwarding inside tmux stops working.
 1. install the sshd hook
 
     ```bash
-    install -m 600 ~/.tmux/ssh/rc ~/.ssh/rc
+    install -m 600 ~/.config/tmux/ssh/rc ~/.ssh/rc
     ```
 
     Keep the `xauth` block in that file, X11 forwarding needs it once
@@ -79,7 +73,7 @@ Without the steps below, agent forwarding inside tmux stops working.
    `fixssh` helper
 
     ```bash
-    echo '[ -f "$HOME/.tmux/shell/ssh-agent.sh" ] && . "$HOME/.tmux/shell/ssh-agent.sh"' >> ~/.bashrc
+    echo '[ -f "$HOME/.config/tmux/shell/ssh-agent.sh" ] && . "$HOME/.config/tmux/shell/ssh-agent.sh"' >> ~/.bashrc
     ```
 
 1. reconnect over SSH so `~/.ssh/rc` creates the link, then check it
@@ -100,7 +94,7 @@ based approach that handles it.
 
 ## kitty integration
 
-`.tmux.conf` sources `kitty-nav.conf`. It needs tmux 3.3+, kitty with
+`tmux.conf` sources `kitty-nav.conf`. It needs tmux 3.3+, kitty with
 `allow_remote_control yes` and the kitty side in `~/.config/kitty` (`pass_keys.py`,
 `leader.py`, `navigators.py`).
 
