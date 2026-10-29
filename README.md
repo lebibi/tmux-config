@@ -97,3 +97,14 @@ two clients connected at the same time (laptop and desktop both attached). In
 that case agent requests keep going to whichever client attached last. See
 [socklink](https://markshroyer.com/2025/09/socklink/) for a `client-active`
 based approach that handles it.
+
+## kitty integration
+
+`.tmux.conf` sources `kitty-nav.conf`. It needs tmux 3.3+, kitty with
+`allow_remote_control yes` and the kitty side in `~/.config/kitty` (`pass_keys.py`,
+`leader.py`, `navigators.py`).
+
+- `ctrl+h/j/k/l` moves across nvim splits, tmux panes and kitty windows. It replaces
+  vim-tmux-navigator.
+- `prefix Z` zooms the kitty window. `prefix V` and `prefix _` split it in the
+  current pane's directory.
